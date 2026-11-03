@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Leg before wicket (LBW)",
+    "summary": "A batter can be out LBW when a delivery that is not a no-ball hits the batter's person, the ball would have hit the stumps, and the other LBW conditions are met. The result depends on where the ball pitched, where it hit the batter, and whether the batter made a genuine attempt to play the ball.",
+    "keywords": ["lbw", "leg before wicket", "leg", "wicket", "stumps", "pitch", "impact", "out"]
+  },
+  {
+    "name": "Wide ball",
+    "summary": "A wide is called when the ball is too far from the striker to be hit with a normal cricket stroke, subject to the playing conditions. A wide adds one extra to the batting side and does not count as a legal delivery.",
+    "keywords": ["wide", "extra", "delivery", "crease", "wicketkeeper", "runs"]
+  },
+  {
+    "name": "No-ball",
+    "summary": "A no-ball can be called for infringements such as an illegal delivery stride or an unfair delivery. It adds an extra and is not a legal delivery; the batter may also have dismissal protections that depend on the mode of dismissal and playing conditions.",
+    "keywords": ["no-ball", "noball", "illegal", "bowler", "extra", "free hit", "delivery"]
+  },
+  {
+    "name": "Super Over",
+    "summary": "A Super Over is a one-over-per-side tie-break used in competitions whose playing conditions call for it. The team with the higher score in the Super Over wins, with further tie-break rules defined by that competition.",
+    "keywords": ["super over", "tied", "tie", "tiebreak", "one over", "innings"]
+  }
+]

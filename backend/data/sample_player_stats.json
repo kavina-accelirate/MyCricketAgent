@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Asha Sharma",
+    "aliases": ["Asha"],
+    "format": "T20 demo",
+    "matches": 12,
+    "runs": 286,
+    "balls_faced": 198,
+    "note": "Synthetic example profile created for demonstrating agent tools; not a real player's record."
+  },
+  {
+    "name": "Dev Patel",
+    "aliases": ["Dev"],
+    "format": "T20 demo",
+    "matches": 10,
+    "runs": 241,
+    "balls_faced": 155,
+    "note": "Synthetic example profile created for demonstrating agent tools; not a real player's record."
+  },
+  {
+    "name": "Maya Khan",
+    "aliases": ["Maya"],
+    "format": "T20 demo",
+    "matches": 14,
+    "runs": 319,
+    "balls_faced": 226,
+    "note": "Synthetic example profile created for demonstrating agent tools; not a real player's record."
+  }
+]

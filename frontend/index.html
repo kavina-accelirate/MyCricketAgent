@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f2">
+  <title>Boundary — Cricket Assistant</title>
+  <style>
+    :root { color-scheme: light; --ink:#17231e; --muted:#68766e; --green:#1d694d; --line:#e4e9e3; --paper:#fff; --bg:#f5f7f2; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font:15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; display:flex; flex-direction:column }
+    header { height:72px; padding:0 clamp(20px,5vw,72px); display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:rgba(255,255,255,.76) }
+    .brand { display:flex; align-items:center; gap:11px; font-size:17px; font-weight:700; letter-spacing:-.03em }
+    .logo { width:34px; height:34px; display:grid; place-items:center; color:white; background:var(--green); border-radius:11px; font-size:17px }
+    .status { color:var(--muted); font-size:12px; display:flex; gap:8px; align-items:center }
+    .dot { width:8px; height:8px; background:#58a77d; border-radius:50% }
+    main { width:min(780px,100%); margin:0 auto; padding:50px 22px 30px; flex:1; display:flex; flex-direction:column }
+    .intro { text-align:center; margin:16px 0 35px }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:700 }
+    h1 { margin:10px 0 8px; font-size:clamp(30px,5vw,43px); line-height:1.12; letter-spacing:-.055em }
+    .sub { margin:0; color:var(--muted) }
+    #messages { display:flex; flex-direction:column; gap:18px; padding:8px 0 22px; flex:1 }
+    .message { display:flex; gap:11px; align-items:flex-start; max-width:88%; animation:appear .18s ease-out }
+    .message.user { align-self:flex-end; flex-direction:row-reverse }
+    .avatar { flex:none; width:30px; height:30px; display:grid; place-items:center; border-radius:10px; color:var(--green); background:#e5eee7; font-size:13px; font-weight:700 }
+    .user .avatar { color:#fff; background:#36443c }
+    .bubble { padding:11px 15px; border:1px solid var(--line); border-radius:4px 15px 15px 15px; background:var(--paper); white-space:pre-wrap; overflow-wrap:anywhere }
+    .user .bubble { color:#fff; border-color:#285c47; background:#285c47; border-radius:15px 4px 15px 15px }
+    .typing { color:var(--muted); font-style:italic }
+    .activity { margin-top:7px; color:#819087; font-size:11px; }
+    .suggestions { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:0 0 20px }
+    .suggestion { padding:8px 12px; color:#415148; border:1px solid #dce5dc; border-radius:999px; background:#fff; cursor:pointer; font:inherit; font-size:12px; transition:.15s }
+    .suggestion:hover { border-color:#8cae99; color:var(--green); transform:translateY(-1px) }
+    .composer { display:flex; align-items:flex-end; gap:10px; padding:10px; border:1px solid #dfe6df; border-radius:18px; background:#fff; box-shadow:0 8px 28px #1c39200b }
+    textarea { width:100%; min-height:44px; max-height:150px; padding:10px 8px; resize:none; border:0; outline:0; background:transparent; color:var(--ink); font:inherit }
+    textarea::placeholder { color:#9aa49d }
+    .send { width:42px; height:42px; flex:none; border:0; border-radius:13px; background:var(--green); color:#fff; font-size:18px; cursor:pointer; transition:.15s }
+    .send:hover { background:#15563d }
+    .send:disabled { opacity:.5; cursor:wait }
+    .under { display:flex; justify-content:space-between; color:#8a968e; font-size:11px; padding:9px 5px 0 }
+    .new-chat { padding:5px 10px; color:var(--muted); border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer; font:inherit; font-size:12px }
+    footer { padding:12px; text-align:center; color:#9aa49d; font-size:11px }
+    @keyframes appear { from { opacity:0; transform:translateY(5px) } to { opacity:1; transform:translateY(0) } }
+    @media(max-width:520px) { header { height:62px } main { padding-top:28px } .message { max-width:96% } .status span:last-child { display:none } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><div class="logo">✦</div><span>Boundary</span></div>
+    <div class="status"><i class="dot"></i><span>Cricket assistant</span></div>
+  </header>
+  <main>
+    <section class="intro" id="intro">
+      <div class="eyebrow">Your cricket companion</div>
+      <h1>Let’s talk cricket.</h1>
+      <p class="sub">Ask about the game, its rules, players, or history.</p>
+    </section>
+    <section id="messages" aria-live="polite" aria-label="Conversation"></section>
+    <div class="suggestions" id="suggestions">
+      <button class="suggestion">What is the LBW rule?</button>
+      <button class="suggestion">How does a Super Over work?</button>
+      <button class="suggestion">Explain swing bowling</button>
+    </div>
+    <form id="chat-form">
+      <div class="composer">
+        <textarea id="question" rows="1" maxlength="4000" placeholder="Ask a cricket question..." aria-label="Your question" required></textarea>
+        <button class="send" id="send" type="submit" aria-label="Send question">↑</button>
+      </div>
+      <div class="under"><span>Enter to send · Shift + Enter for a new line</span><button class="new-chat" id="new-chat" type="button">New chat</button></div>
+    </form>
+  </main>
+  <footer>Answers are AI-generated. Sample player stats are synthetic; live scores are not available.</footer>
+  <script>
+    const form = document.querySelector('#chat-form');
+    const input = document.querySelector('#question');
+    const send = document.querySelector('#send');
+    const messages = document.querySelector('#messages');
+    const intro = document.querySelector('#intro');
+    const suggestions = document.querySelector('#suggestions');
+    let sessionId = null;
+
+    function addMessage(text, role, extraClass = '') {
+      const row = document.createElement('div');
+      row.className = `message ${role}`;
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = role === 'user' ? 'Y' : '✦';
+      const bubble = document.createElement('div');
+      bubble.className = `bubble ${extraClass}`;
+      bubble.textContent = text;
+      row.append(avatar, bubble);
+      messages.append(row);
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return row;
+    }
+
+    async function ask(question) {
+      const cleanQuestion = question.trim();
+      if (!cleanQuestion || send.disabled) return;
+      intro.hidden = true;
+      suggestions.hidden = true;
+      addMessage(cleanQuestion, 'user');
+      input.value = '';
+      input.style.height = '44px';
+      send.disabled = true;
+      const pending = addMessage('Thinking…', 'assistant', 'typing');
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: cleanQuestion, ...(sessionId ? { session_id: sessionId } : {}) })
+        });
+        const data = await response.json();
+        pending.remove();
+        if (!response.ok) {
+          const detail = typeof data.detail === 'string' ? data.detail : 'The request could not be completed.';
+          addMessage(detail, 'assistant');
+          return;
+        }
+        sessionId = data.session_id;
+        const reply = addMessage(data.answer, 'assistant');
+        if (Array.isArray(data.activity) && data.activity.length) {
+          const activity = document.createElement('div');
+          activity.className = 'activity';
+          activity.textContent = `Tools used: ${data.activity.join(' · ')}`;
+          reply.querySelector('.bubble').append(activity);
+        }
+        const meta = document.createElement('div');
+        meta.className = 'activity';
+        const modelLabel = data.model ? `Model: ${data.model}` : 'Model: server setting';
+        const usage = data.usage;
+        const usageLabel = usage && Number.isFinite(Number(usage.total_tokens))
+          ? `${usage.total_tokens} tokens (${usage.input_tokens} in · ${usage.output_tokens} out)`
+          : 'token usage missing from backend response';
+        meta.textContent = `${modelLabel} · ${usageLabel}`;
+        reply.querySelector('.bubble').append(meta);
+      } catch (_) {
+        pending.remove();
+        addMessage('Could not reach the backend. Check that the server is running and try again.', 'assistant');
+      } finally {
+        send.disabled = false;
+        input.focus();
+      }
+    }
+
+    form.addEventListener('submit', event => { event.preventDefault(); ask(input.value); });
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
+    });
+    input.addEventListener('input', () => { input.style.height = '44px'; input.style.height = `${Math.min(input.scrollHeight, 150)}px`; });
+    document.querySelectorAll('.suggestion').forEach(button => button.addEventListener('click', () => ask(button.textContent)));
+    document.querySelector('#new-chat').addEventListener('click', () => {
+      sessionId = null;
+      messages.replaceChildren();
+      intro.hidden = false;
+      suggestions.hidden = false;
+      input.focus();
+    });
+  </script>
+</body>
+</html>

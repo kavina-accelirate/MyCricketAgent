@@ -1,0 +1,30 @@
+[
+  {
+    "id": "rules-lbw",
+    "question": "What is LBW?",
+    "expected_path": ["rules_research", "search_cricket_rules", "review_answer"],
+    "required_tools": ["search_cricket_rules"],
+    "must_include": ["stumps"]
+  },
+  {
+    "id": "stats-strike-rate",
+    "question": "What is Asha Sharma's strike rate in the demo data?",
+    "expected_path": ["stats_research", "lookup_player_stats", "calculate_strike_rate", "review_answer"],
+    "required_tools": ["lookup_player_stats", "calculate_strike_rate"],
+    "must_include": ["144.44", "synthetic"]
+  },
+  {
+    "id": "multi-step-player-comparison",
+    "question": "Compare Asha Sharma and Dev Patel by T20 demo strike rate.",
+    "expected_path": ["stats_research", "lookup_player_stats", "calculate_strike_rate", "review_answer"],
+    "required_tools": ["lookup_player_stats", "calculate_strike_rate"],
+    "must_include": ["144.44", "155.48"]
+  },
+  {
+    "id": "missing-player",
+    "question": "What is Virat Kohli's strike rate in your demo dataset?",
+    "expected_path": ["stats_research", "lookup_player_stats", "review_answer"],
+    "required_tools": ["lookup_player_stats"],
+    "must_include": ["not", "demo"]
+  }
+]
